@@ -10,35 +10,28 @@ import {
 } from "firebase/firestore";
 
 function HomePage() {
-  const [visitCount, setVisitCount] = useState(0);
+  const [visitCount, setVisitCount] = useState(null);
 
   useEffect(() => {
     console.log("useEffect");
     const db = getFirestore(firebaseApp);
     const visitCountRef = doc(db, "stats", "visitCount");
 
-    const increment = () => {
-      setVisitCount((prevCount) => prevCount + 1);
-      console.log("incremented succesfully");
-      console.log(visitCount);
-      updateDoc(visitCountRef, {count: visitCount}).catch(e => console.log(e));
-    };
-
-    const getVisitCount = async () => {
+    const updateVeiw = async () => {
       const docSnap = await getDoc(visitCountRef);
+
       if (docSnap.exists()) {
-        setVisitCount(docSnap.data().count);
-        console.log('aah the count actually updated :)');
-        console.log(docSnap.data().count);
+        setVisitCount(await docSnap.data().count || 0);
+        console.log(visitCount);
+        await updateDoc(visitCountRef, { count: visitCount + 1 });
+        console.log("succesfully updated");
+        console.log(visitCount);
       } else {
-        setVisitCount(1);
-        setDoc(visitCountRef, { count: visitCount });
-        console.log('this area was called');
+        console.log("field does not exist");
       }
     };
 
-    getVisitCount();
-    increment();
+    updateVeiw();
   }, []);
 
   return (
