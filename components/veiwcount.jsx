@@ -1,16 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import firebaseApp from "../lib/firebase";
-import {
-  getFirestore,
-  getDoc,
-  setDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { getFirestore, getDoc, doc, updateDoc } from "firebase/firestore";
 
 function HomePage() {
-  const [visitCount, setVisitCount] = useState(null);
+  const [visitCount, setVisitCount] = useState(0);
 
   useEffect(() => {
     console.log("useEffect");
@@ -18,14 +12,15 @@ function HomePage() {
     const visitCountRef = doc(db, "stats", "visitCount");
 
     const updateVeiw = async () => {
+      // get the document refrence
       const docSnap = await getDoc(visitCountRef);
 
       if (docSnap.exists()) {
-        setVisitCount(await docSnap.data().count || 0);
-        console.log(visitCount);
-        await updateDoc(visitCountRef, { count: visitCount + 1 });
+        // setVisitCount(docSnap.data().count); // get the current value
+        const currentVeiws = docSnap.data().count 
+        setVisitCount(currentVeiws + 1);
+        await updateDoc(visitCountRef, { count: currentVeiws + 1 }); // update the current value
         console.log("succesfully updated");
-        console.log(visitCount);
       } else {
         console.log("field does not exist");
       }
@@ -37,7 +32,6 @@ function HomePage() {
   return (
     <div>
       <h1>Visit Count: {visitCount}</h1>
-      {/* Your other components/content */}
     </div>
   );
 }
