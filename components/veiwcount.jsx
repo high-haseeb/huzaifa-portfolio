@@ -7,13 +7,14 @@ function HomePage() {
   const [visitCount, setVisitCount] = useState(0);
 
   useEffect(() => {
+
     console.log("useEffect");
     const db = getFirestore(firebaseApp);
     const visitCountRef = doc(db, "stats", "visitCount");
 
     const updateVeiw = async () => {
       // get the document refrence
-      const docSnap = await getDoc(visitCountRef);
+      const docSnap = await getDoc(visitCountRef); // get the current view count
 
       if (docSnap.exists()) {
         // setVisitCount(docSnap.data().count); // get the current value
